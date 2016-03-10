@@ -18,11 +18,17 @@ abstract class TreeModel extends Model implements ITreeModel {
     }
     
     public function prev() {
-    
+        return (new TreeQuery($this))
+            ->where("$this->rgt = $this->{$this->lft} - 1")
+            ->execute()
+            ->getFirst();
     }
     
     public function next() {
-    
+        return (new TreeQuery($this))
+            ->where("$this->lft = $this->{$this->rgt} + 1")
+            ->execute()
+            ->getFirst();
     }
     
     public function ancestors() {

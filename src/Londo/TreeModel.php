@@ -2,9 +2,16 @@
 namespace Londo;
 
 use Phalcon\Mvc\Model,
-    Londo\ITreeModel;
+    Londo\ITreeModel,
+    Londo\TreeQuery;
 
 abstract class TreeModel extends Model implements ITreeModel {
+    
+    public function setup(Array $maps) {
+        $this->lft = $maps['lft'];
+        $this->rgt = $maps['rgt'];
+        $this->key = $maps['key'];
+    }
     
     public function parent() {
     
@@ -64,6 +71,20 @@ abstract class TreeModel extends Model implements ITreeModel {
     
     public function insertAfter(Model $node) {
     
+    }
+    
+    public static function findNode($params) {
+        if (is_numeric($params)) {
+            $identity = $params;
+            $params = array();
+            $params[$this->key] = $identity;
+        }
+        
+        return (new TreeQuery())
+            ->compile(TreeQuery::COMPILE_NODE)
+            ->params($params)
+            ->execute()
+            ->getFirst();
     }
     
 }

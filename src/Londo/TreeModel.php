@@ -4,7 +4,7 @@ namespace Londo;
 use Phalcon\Mvc\Model,
     Londo\ITreeModel;
 
-class TreeModel extends Model implements ITreeModel {
+abstract class TreeModel extends Model implements ITreeModel {
     
     public function parent() {
     

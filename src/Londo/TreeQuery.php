@@ -14,7 +14,7 @@ class TreeQuery {
     private $bind;
     private $link;
     
-    private $where;
+    private $cond;
     private $type;
     private $data;
     private $table;
@@ -24,7 +24,7 @@ class TreeQuery {
         $this->bind = array();
         $this->link = $base->getReadConnection();
         
-        $this->where = array(
+        $this->cond = array(
             'and' => array(),
             'or' => array()
         );
@@ -47,13 +47,13 @@ class TreeQuery {
         }
     }
     
-    public function execute() {
+    public function where($where, $bind = array()) {
+        $this->cond['and'][] = $where;
+        $this->bind = array_merge($this->bind, $bind);
+    }
+    
+    public function join($model, $cond = '', $alias = '', $type = '') {
         
-        $method = 'compile'.ucwords($this->type);
-        $this->$method($this->data);
-        
-        $this->query = preg_replace('/:([^:]+):/', ':$1', $this->query);
-        return new Resultset(NULL, $this->base, $this->link->query($this->query, $this->bind));
     }
     
     public function params(Array $params) {
@@ -66,7 +66,16 @@ class TreeQuery {
         }
         
         $this->bind = array_merge($this->bind, $bind);
-        $this->where['and'][] = '('.implode(' AND ', $where).')';
+        $this->cond['and'][] = '('.implode(' AND ', $where).')';
+    }
+    
+    public function execute() {
+        
+        $method = 'compile'.ucwords($this->type);
+        $this->$method($this->data);
+        
+        $this->query = preg_replace('/:([^:]+):/', ':$1', $this->query);
+        return new Resultset(NULL, $this->base, $this->link->query($this->query, $this->bind));
     }
     
     public function __toString() {

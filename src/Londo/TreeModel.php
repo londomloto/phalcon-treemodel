@@ -1,9 +1,10 @@
 <?php
 namespace Londo;
 
-use Phalcon\Mvc\Model;
+use Phalcon\Mvc\Model,
+    Londo\ITreeModel;
 
-class TreeModel extends Model {
+class TreeModel extends Model implements ITreeModel {
     
     public function parent() {
     

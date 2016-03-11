@@ -14,7 +14,11 @@ abstract class TreeModel extends Model implements ITreeModel {
     }
     
     public function parent() {
-    
+        $path = explode('/', $this->path);
+        array_pop($path);
+        if ( ! empty($path))
+            return self::findNode(array_pop($path));
+        return FALSE;
     }
     
     public function prev() {
@@ -32,7 +36,21 @@ abstract class TreeModel extends Model implements ITreeModel {
     }
     
     public function ancestors() {
-    
+        $path = explode('/', $this->path);
+        $bind = array();
+        $where = array_map(
+            function($id) use (&$bind) {
+                $token = "path_{$id}";
+                $bind[$token] = $id;
+                return ":{$token}:";
+            },
+            $path
+        );
+        
+        return (new TreeQuery())
+            ->where("$this->key IN (".implode(", ", $where).")", $bind)
+            ->orderBy("$this->rgt - $this->lft")
+            ->execute();
     }
     
     public function descendants() {

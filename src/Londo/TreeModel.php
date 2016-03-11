@@ -105,7 +105,7 @@ abstract class TreeModel extends Model implements ITreeModel {
         }
         
         return (new TreeQuery())
-            ->compile(TreeQuery::COMPILE_NODE)
+            ->setType(TreeQuery::QUERY_NODE)
             ->params($params)
             ->execute()
             ->getFirst();
